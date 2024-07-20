@@ -19,7 +19,22 @@ def extract():
     return data
 
 
+@generate_question.route('/web_modify_graph', methods=['POST'])
+def web_modify_graph():
+    try:
+        file_path = os.path.join(os.path.dirname(__file__), 'result.json')
+        with open(file_path, 'r', encoding='utf-8') as json_file:
+            data = json.load(json_file)
+    except Exception as e:
+        data = {
+            'error': 'Failed to modify data in response.json',
+            'exception': str(e)
+        }
+    return data
+
 # 生成题目
+
+
 @generate_question.route('/exam_item', methods=['POST'])
 def generate():
     return '嘿嘿'
@@ -37,6 +52,10 @@ def upload():
     '''
     mode = request.form.get('mode')
     if (mode == "single"):
+        # 处理标题
+        headings = request.form['headings']
+
+        print(headings)
         file = request.files['file']
         # 保存文件
         file.save(os.path.join(
@@ -67,6 +86,10 @@ def upload():
         file_id = request.form['file_id']
         filename = request.form['filename']
         chunks = request.form['chunks']
+
+        # 处理标题
+        headings = request.form['headings']
+
         chunk_folder = os.path.join(
             current_app.config['BASE_DIR'], 'chunks', file_id)
         final_filepath = os.path.join(
